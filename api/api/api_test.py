@@ -3,7 +3,6 @@ import requests
 
 def test_post_headers_body_json():
     url = getenv("API_URL") or 'http://localhost:8000/'
-    url += "break"
     # Additional headers.
     headers = {'Content-Type': 'application/json' }
 
