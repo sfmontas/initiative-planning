@@ -4,20 +4,12 @@ import requests
 url = getenv("API_URL") or 'http://localhost:8000/'
 
 
-def test_root():
-    resp = requests.get(url)
-    # Validate response headers and body contents, e.g. status code.
-    assert resp.status_code == 200
-    resp_body = resp.json()
-    assert resp_body['message'] == "Hello World!"
-
-
 def test_create_initiative():
     # Arrange
     initiative_name = "Test initiative"
 
     # Act
-    resp = requests.post(url + "initiatives/", json={"name": initiative_name})
+    resp = requests.post(url + "initiatives/", json={"name": initiative_name}, timeout=0.1)
 
     # Assert
     assert resp.status_code == 200
@@ -30,7 +22,7 @@ def test_create_initiative():
 def test_update_initiative():
     # Arrange
     initiative_name = "Test initiative"
-    create_resp = requests.post(url + "initiatives/", json={"name": initiative_name})
+    create_resp = requests.post(url + "initiatives/", json={"name": initiative_name}, timeout=0.1)
 
     assert create_resp.status_code == 200
 
@@ -43,7 +35,7 @@ def test_update_initiative():
     updated_name = "Test initiative with updated name"
 
     # Act
-    update_resp = requests.put(url + f"initiatives/{initiative_id}", json={"name": updated_name})
+    update_resp = requests.put(url + f"initiatives/{initiative_id}", json={"name": updated_name}, timeout=0.1)
 
     # Assert
     resp_body = update_resp.json()
@@ -56,7 +48,7 @@ def test_update_initiative():
 def test_get_initiative():
     # Arrange
     initiative_name = "Test initiative"
-    create_resp = requests.post(url + "initiatives/", json={"name": initiative_name})
+    create_resp = requests.post(url + "initiatives/", json={"name": initiative_name}, timeout=0.1)
 
     assert create_resp.status_code == 200
 
@@ -67,7 +59,7 @@ def test_get_initiative():
     assert initiative_id is not None
 
     # Act
-    get_resp = requests.get(url + f"initiatives/{initiative_id}")
+    get_resp = requests.get(url + f"initiatives/{initiative_id}", timeout=0.1)
 
     # Assert
     resp_body = get_resp.json()
@@ -80,7 +72,7 @@ def test_get_initiative():
 def test_get_initiative_events():
     # Arrange
     initiative_name = "Test initiative"
-    create_resp = requests.post(url + "initiatives/", json={"name": initiative_name})
+    create_resp = requests.post(url + "initiatives/", json={"name": initiative_name}, timeout=0.1)
 
     assert create_resp.status_code == 200
 
@@ -92,7 +84,7 @@ def test_get_initiative_events():
 
     updated_name = "Test initiative with updated name"
 
-    update_resp = requests.put(url + f"initiatives/{initiative_id}", json={"name": updated_name})
+    update_resp = requests.put(url + f"initiatives/{initiative_id}", json={"name": updated_name}, timeout=0.1)
 
     resp_body = update_resp.json()
     updated_initiative_id = resp_body['id']
@@ -101,7 +93,7 @@ def test_get_initiative_events():
     assert updated_initiative_id == initiative_id
 
     # Act
-    get_events_resp = requests.get(url + f"initiatives/{initiative_id}/events")
+    get_events_resp = requests.get(url + f"initiatives/{initiative_id}/events", timeout=0.1)
 
     # Assert
     events = get_events_resp.json()
