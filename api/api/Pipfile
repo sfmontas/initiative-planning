@@ -10,10 +10,15 @@ matplotlib = "*"
 memory-profiler = "*"
 pytest = "*"
 requests = "*"
+requests-oauthlib = "*"
+pytest-xdist = "*"
 
 [packages]
 fastapi = "*"
 uvicorn = "*"
+python-multipart = "*"
+python-jose = {extras = ["cryptography"], version = "*"}
+passlib = {extras = ["bcrypt"], version = "*"}
 
 [requires]
 python_version = "3.7"

@@ -18,7 +18,8 @@ services:
       target: dev
     command: "sleep infinity" # TODO: There must be a better way to start a container that just waits.
     environment:
-      - API_URL=http://api/
+      - API_TEST_URL=http://api/
+      - OAUTHLIB_INSECURE_TRANSPORT=True
     volumes:
       - ./api/api:/api:cached # TODO: Validate cache works as expected
     depends_on:
