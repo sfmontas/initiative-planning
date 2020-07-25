@@ -2,17 +2,18 @@ from dataclasses import asdict
 from typing import List
 from uuid import UUID
 
-from fastapi import HTTPException, APIRouter
+from fastapi import HTTPException, APIRouter, Depends
 
 from common.events.events import EventResponse
 from domain.initiative_command_handlers import define_initiative, modify_initiative, find_initiative
+from endpoints.iam_endpoints import user_is_authorized_for_permission, InitiativePermissions
 from endpoints.requests import InitiativeRequest
 from endpoints.responses import InitiativeResponse
 
 router = APIRouter()
 
 
-@router.post("/initiatives")
+@router.post("/initiatives", dependencies=[Depends(user_is_authorized_for_permission(InitiativePermissions.Define.value))])
 async def create_initiative(initiative_request: InitiativeRequest):
     initiative = await define_initiative(initiative_request)
 

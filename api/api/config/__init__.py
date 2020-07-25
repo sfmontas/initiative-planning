@@ -2,6 +2,7 @@ from os import getenv
 # Test configuration
 API_TEST_URL = getenv("API_TEST_URL") or 'http://localhost:8000/'
 API_TEST_USER = getenv("API_TEST_USER") or "elvinv"
+API_TEST_USER_NO_PERMISSIONS = getenv("API_TEST_USER") or "vivim"
 API_TEST_PASSWORD = getenv("API_TEST_PASSWORD") or "password"
 API_TEST_TIMEOUT = getenv("API_TEST_TIMEOUT") or .5
 

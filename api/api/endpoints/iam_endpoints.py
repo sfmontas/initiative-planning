@@ -1,22 +1,49 @@
+from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import Optional
+from enum import Enum
+from typing import Optional, List
+from uuid import UUID
 
 from fastapi import Depends, APIRouter, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from config import OAUTH_SECRET_KEY, OAUTH_JWT_ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
 
 fake_users_db = {
     "elvinv": {
         "username": "elvinv",
         "full_name": "Elvin Voh",
-        "email": "elvinvoh@example.com",
+        "email": "elvinv@example.com",
         "hashed_password": "$2b$12$mNFOzbWeA9EIrTK0um5K7OlxYnRQcrB.5EtrlPFLbcRrHnF1XhPv2",
         "disabled": False,
+        "permissions": ["b388caf0-baa3-4bd2-8e13-feb2fa7be097"]
+    },
+    "vivim": {
+        "username": "vivim",
+        "full_name": "Vivi Mo",
+        "email": "vivim@example.com",
+        "hashed_password": "$2b$12$mNFOzbWeA9EIrTK0um5K7OlxYnRQcrB.5EtrlPFLbcRrHnF1XhPv2",
+        "disabled": False,
+        "permissions": []
     }
 }
+
+
+class InitiativePermissions(Enum):
+    Define = UUID("b388caf0-baa3-4bd2-8e13-feb2fa7be097")
+
+
+@dataclass
+class Permission:
+    id: UUID
+    name: str
+
+
+permissions_db = [
+    Permission(id="b388caf0-baa3-4bd2-8e13-feb2fa7be097", name="initiative.define")
+]
 
 
 class TokenResponse(BaseModel):
@@ -29,6 +56,7 @@ class User(BaseModel):
     email: Optional[str] = None
     full_name: Optional[str] = None
     disabled: Optional[bool] = None
+    permissions: List[UUID] = Field(default_factory=list)
 
 
 class UserInDB(User):
@@ -72,7 +100,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     return encoded_jwt
 
 
-async def get_current_user(token: str = Depends(oauth2_scheme)):
+async def user_is_authenticated(token: str = Depends(oauth2_scheme)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -91,7 +119,25 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
     return user
 
 
-async def get_current_active_user(current_user: User = Depends(get_current_user)):
+def user_is_authorized_for_permission(permission_id: UUID):
+    if permission_id is None:
+        raise ValueError(f"Missing Permission.")
+
+    async def user_is_authorized(user: User = Depends(user_is_authenticated)):
+
+        if not any(permission == permission_id for permission in user.permissions):
+
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="User does not have access."
+            )
+
+        return User
+
+    return user_is_authorized
+
+
+async def get_current_active_user(current_user: User = Depends(user_is_authenticated)):
     if current_user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
