@@ -6,14 +6,15 @@ from fastapi import HTTPException, APIRouter, Depends
 
 from common.events.events import EventResponse
 from domain.initiative_command_handlers import define_initiative, modify_initiative, find_initiative
-from endpoints.iam_endpoints import user_is_authorized_for_permission, InitiativePermissions
+from endpoints.iam_endpoints import authorized_to_define_initiative
 from endpoints.requests import InitiativeRequest
 from endpoints.responses import InitiativeResponse
 
 router = APIRouter()
 
 
-@router.post("/initiatives", dependencies=[Depends(user_is_authorized_for_permission(InitiativePermissions.Define.value))])
+@router.post("/workspace/{workspace_id}/initiatives",
+             dependencies=[Depends(authorized_to_define_initiative)])
 async def create_initiative(initiative_request: InitiativeRequest):
     initiative = await define_initiative(initiative_request)
 
@@ -23,7 +24,7 @@ async def create_initiative(initiative_request: InitiativeRequest):
     return response
 
 
-@router.put("/initiatives/{initiative_id}")
+@router.put("/workspace/{workspace_id}/initiatives/{initiative_id}")
 async def update_initiative(initiative_id: UUID, initiative_request: InitiativeRequest):
     initiative = await modify_initiative(initiative_id, initiative_request)
 
@@ -36,7 +37,7 @@ async def update_initiative(initiative_id: UUID, initiative_request: InitiativeR
     return response
 
 
-@router.get("/initiatives/{initiative_id}", response_model=InitiativeResponse)
+@router.get("/workspace/{workspace_id}/initiatives/{initiative_id}", response_model=InitiativeResponse)
 async def get_initiative(initiative_id: UUID):
     initiative = await find_initiative(initiative_id)
 
@@ -47,7 +48,7 @@ async def get_initiative(initiative_id: UUID):
                               name=initiative.name)
 
 
-@router.get("/initiatives/{initiative_id}/events", response_model=List[EventResponse])
+@router.get("/workspace/{workspace_id}/initiatives/{initiative_id}/events", response_model=List[EventResponse])
 async def get_initiative_events(initiative_id: UUID):
     initiative = await find_initiative(initiative_id)
 

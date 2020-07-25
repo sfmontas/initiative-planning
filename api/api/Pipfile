@@ -19,6 +19,7 @@ uvicorn = "*"
 python-multipart = "*"
 python-jose = {extras = ["cryptography"], version = "*"}
 passlib = {extras = ["bcrypt"], version = "*"}
+dacite = "*"
 
 [requires]
 python_version = "3.7"

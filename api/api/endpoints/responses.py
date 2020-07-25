@@ -8,3 +8,6 @@ class InitiativeResponse(BaseModel):
     name: str
 
 
+class WorkspaceResponse(BaseModel):
+    id: UUID
+    name: str
