@@ -10,4 +10,6 @@ OAUTH_SECRET_KEY = getenv("OAUTH_SECRET_KEY") or "09d25e094faa6ca2556c818166b7a9
 OAUTH_JWT_ALGORITHM = getenv("OAUTH_JWT_ALGORITHM") or "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = getenv("OAUTH_JWT_ALGORITHM") or 30
 
+SQL_DB_URL = "mysql://root:pass123@mysql:3306/initiative_planning"
+
 

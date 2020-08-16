@@ -12,6 +12,7 @@ pytest = "*"
 requests = "*"
 requests-oauthlib = "*"
 pytest-xdist = "*"
+alembic = "*"
 
 [packages]
 fastapi = "*"
@@ -20,6 +21,8 @@ python-multipart = "*"
 python-jose = {extras = ["cryptography"], version = "*"}
 passlib = {extras = ["bcrypt"], version = "*"}
 dacite = "*"
+sqlalchemy = "*"
+mysqlclient = "*"
 
 [requires]
 python_version = "3.7"

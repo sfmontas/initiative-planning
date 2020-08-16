@@ -7,4 +7,5 @@ before_install:
   - docker-compose up -d
 
 script:
+  - make migrations
   - make api_test

@@ -1,3 +1,6 @@
+migrations:
+	docker exec -it script_runner alembic upgrade head
+
 up:
 	docker-compose up --remove-orphans -d
 
